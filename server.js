@@ -15,6 +15,7 @@ const passport = require('passport');
 const { router: usersRouter } = require('./users');
 const { router: workoutsRouter } = require('./workouts');
 const { router: exercisesRouter } = require('./exercises');
+const { router: setsRouter } = require('./sets');
 
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 
@@ -47,6 +48,7 @@ app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
 app.use('/api/workouts/', workoutsRouter);
 app.use('/api/exercises/', exercisesRouter);
+app.use('/api/sets/', setsRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 

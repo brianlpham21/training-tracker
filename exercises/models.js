@@ -5,12 +5,12 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const ExerciseSchema = mongoose.Schema({
-    name: {type: String, required: true},
+    name: {type: String, required: true}
 });
 
 ExerciseSchema.methods.serialize = function() {
   return {
-    name: this.name || '',
+    name: this.name || ''
   };
 };
 
