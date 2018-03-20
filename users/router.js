@@ -15,7 +15,8 @@ const {router: authRouter, localStrategy, jwtStrategy} = require('../auth');
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-// Post to register a new user
+// POSTS or CREATES a new user (registration)
+
 router.post('/', jsonParser, (req, res) => {
   const requiredFields = ['username', 'password'];
   const missingField = requiredFields.find(field => !(field in req.body));
@@ -145,11 +146,16 @@ router.post('/', jsonParser, (req, res) => {
 // we're just doing this so we have a quick way to see
 // if we're creating users. keep in mind, you can also
 // verify this in the Mongo shell.
+
+// GETS all users
+
 router.get('/', (req, res) => {
   return User.find()
     .then(users => res.json(users.map(user => user.serialize())))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
+
+// GETS all workouts for a specific user provided User Id
 
 router.get('/:user_id/workouts', jwtAuth, (req, res) => {
   Workout
@@ -160,6 +166,8 @@ router.get('/:user_id/workouts', jwtAuth, (req, res) => {
   );
 });
 
+// GETS select workout for a specific user provided User Id and Workout Object Id
+
 router.get('/:user_id/workouts/:workout_id', jwtAuth, (req, res) => {
   Workout
     .find()
@@ -169,6 +177,8 @@ router.get('/:user_id/workouts/:workout_id', jwtAuth, (req, res) => {
     .catch(err => res.status(500).json({message: 'Internal server error'})
   );
 });
+
+// POSTS or CREATES a workout for a specific user provided User Id and name
 
 router.post('/:user_id/workouts', jwtAuth, (req, res) => {
   if (!('name' in req.body)) {

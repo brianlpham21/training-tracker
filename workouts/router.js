@@ -12,22 +12,28 @@ const {router: authRouter, localStrategy, jwtStrategy} = require('../auth');
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-// router.get('/', jwtAuth, (req, res) => {
-//   Workout
-//     .find()
-//     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
-//     .catch(err => res.status(500).json({message: 'Internal server error'})
-//   );
-// });
+// GETS all workouts
 
-// router.get('/:id', jwtAuth, (req, res) => {
-//   Workout
-//     .find()
-//     .then(workouts => workouts.filter(workout => workout.user === req.params.id))
-//     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
-//     .catch(err => res.status(500).json({message: 'Internal server error'})
-//   );
-// });
+router.get('/', jwtAuth, (req, res) => {
+  Workout
+    .find()
+    .then(workouts => res.json(workouts.map(workout => workout.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'})
+  );
+});
+
+// GETS select workout with provided Object Id
+
+router.get('/:id', jwtAuth, (req, res) => {
+  Workout
+    .find()
+    .then(workouts => workouts.filter(workout => workout.user === req.params.id))
+    .then(workouts => res.json(workouts.map(workout => workout.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'})
+  );
+});
+
+// POSTS or CREATES a new workout with provided name
 
 router.post('/', jwtAuth, (req, res) => {
   if (!('name' in req.body)) {
@@ -48,6 +54,8 @@ router.post('/', jwtAuth, (req, res) => {
       res.status(500).json({message: 'Internal server error'});
     });
 });
+
+// PUTS or UPDATES workout with provided workout Object Id and name
 
 router.put('/:id', (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
@@ -72,6 +80,8 @@ router.put('/:id', (req, res) => {
     .then(workout => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
+
+// DELETES workout with provided workout Object Id
 
 router.delete('/:id', (req, res) => {
   Workout
