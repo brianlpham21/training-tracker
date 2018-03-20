@@ -13,6 +13,9 @@ const passport = require('passport');
 // console.log(jimmy); // Stewart - the variable name is jimmy, not james
 // console.log(bobby); // De Niro - the variable name is bobby, not robert
 const { router: usersRouter } = require('./users');
+const { router: workoutsRouter } = require('./workouts');
+const { router: exercisesRouter } = require('./exercises');
+
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 
 mongoose.Promise = global.Promise;
@@ -23,6 +26,8 @@ const app = express();
 
 // Logging
 app.use(morgan('common'));
+
+app.use(express.json());
 
 // CORS
 app.use(function (req, res, next) {
@@ -40,13 +45,15 @@ passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
+app.use('/api/workouts/', workoutsRouter);
+app.use('/api/exercises/', exercisesRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
 // A protected endpoint which needs a valid JWT to access it
 app.get('/api/protected', jwtAuth, (req, res) => {
   return res.json({
-    data: 'rosebud'
+    data: 'other stuff'
   });
 });
 
