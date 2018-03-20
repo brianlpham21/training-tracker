@@ -1,4 +1,5 @@
 'use strict';
+
 const express = require('express');
 const passport = require('passport');
 
@@ -10,22 +11,22 @@ const {router: authRouter, localStrategy, jwtStrategy} = require('../auth');
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-router.get('/', jwtAuth, (req, res) => {
-  Workout
-    .find()
-    .then(workouts => res.json(workouts.map(workout => workout.serialize())))
-    .catch(err => res.status(500).json({message: 'Internal server error'})
-  );
-});
+// router.get('/', jwtAuth, (req, res) => {
+//   Workout
+//     .find()
+//     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
+//     .catch(err => res.status(500).json({message: 'Internal server error'})
+//   );
+// });
 
-router.get('/:id', jwtAuth, (req, res) => {
-  Workout
-    .find()
-    .then(workouts => workouts.filter(workout => workout.user === req.params.id))
-    .then(workouts => res.json(workouts.map(workout => workout.serialize())))
-    .catch(err => res.status(500).json({message: 'Internal server error'})
-  );
-});
+// router.get('/:id', jwtAuth, (req, res) => {
+//   Workout
+//     .find()
+//     .then(workouts => workouts.filter(workout => workout.user === req.params.id))
+//     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
+//     .catch(err => res.status(500).json({message: 'Internal server error'})
+//   );
+// });
 
 router.post('/', jwtAuth, (req, res) => {
   if (!('name' in req.body)) {

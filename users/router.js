@@ -1,12 +1,19 @@
 'use strict';
+
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
 const {User} = require('./models');
+const {Workout} = require('../workouts/models');
 
 const router = express.Router();
 
 const jsonParser = bodyParser.json();
+
+const {router: authRouter, localStrategy, jwtStrategy} = require('../auth');
+
+const jwtAuth = passport.authenticate('jwt', { session: false });
 
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
@@ -142,6 +149,45 @@ router.get('/', (req, res) => {
   return User.find()
     .then(users => res.json(users.map(user => user.serialize())))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
+router.get('/:user_id/workouts', jwtAuth, (req, res) => {
+  Workout
+    .find()
+    .then(workouts => workouts.filter(workout => workout.user === req.params.user_id))
+    .then(workouts => res.json(workouts.map(workout => workout.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'})
+  );
+});
+
+router.get('/:user_id/workouts/:workout_id', jwtAuth, (req, res) => {
+  Workout
+    .find()
+    .then(workouts => workouts.filter(workout => workout.user === req.params.user_id))
+    .then(workouts => workouts.filter(workout => workout.id === req.params.workout_id))
+    .then(workouts => res.json(workouts.map(workout => workout.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'})
+  );
+});
+
+router.post('/:user_id/workouts', jwtAuth, (req, res) => {
+  if (!('name' in req.body)) {
+    const message = `Missing name in request body`
+    console.error(message);
+    return res.status(400).send(message);
+  }
+
+  Workout
+    .create({
+      user: req.params.user_id,
+      date: Date.now(),
+      name: req.body.name
+    })
+    .then(workout => res.status(201).json(workout.serialize()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
 });
 
 module.exports = {router};
