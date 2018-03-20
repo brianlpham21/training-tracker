@@ -5,12 +5,16 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const ExerciseSchema = mongoose.Schema({
-    name: {type: String, required: true}
+    workout_id: {type: String, required: true},
+    name: {type: String, required: true},
+    sets: {type: String}
 });
 
 ExerciseSchema.methods.serialize = function() {
   return {
-    name: this.name || ''
+    workout_id: this.workout_id || '',
+    name: this.name || '',
+    sets: this.sets ||''
   };
 };
 

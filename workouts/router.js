@@ -44,7 +44,7 @@ router.post('/', jwtAuth, (req, res) => {
 
   Workout
     .create({
-      user: req.user.id,
+      user_id: req.user.id,
       date: Date.now(),
       name: req.body.name
     })

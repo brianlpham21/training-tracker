@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const SetSchema = mongoose.Schema({
+    exercise_id: {type: String, required: true},
     set: {type: Number, required: true},
     weight: {type: Number, required: true},
     repetitions: {type: Number, required: true}

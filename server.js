@@ -55,9 +55,8 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 // A protected endpoint which needs a valid JWT to access it
 app.get('/api/protected', jwtAuth, (req, res) => {
   return res.json({
-    data: 'sd'
-  }
-);
+    data: 'rosebud'
+  });
 });
 
 app.use('*', (req, res) => {

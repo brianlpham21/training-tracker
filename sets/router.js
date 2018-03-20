@@ -24,7 +24,7 @@ router.get('/', jwtAuth, (req, res) => {
 // POSTS or CREATES a set for an exercise with provided set, weight, and repetition
 
 router.post('/', jwtAuth, (req, res) => {
-  const requiredFields = ['set', 'weight', 'repetitions'];
+  const requiredFields = ['exercise_id', 'set', 'weight', 'repetitions'];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -36,6 +36,7 @@ router.post('/', jwtAuth, (req, res) => {
 
   Set
     .create({
+      exercise_id: req.body.exercise_id,
       set: req.body.set,
       weight: req.body.weight,
       repetitions: req.body.repetitions

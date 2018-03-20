@@ -32,6 +32,7 @@ router.post('/', jwtAuth, (req, res) => {
 
   Exercise
     .create({
+      workout_id: req.body.workout_id,
       name: req.body.name
     })
     .then(exercise => res.status(201).json(exercise.serialize()))

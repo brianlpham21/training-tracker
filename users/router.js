@@ -149,7 +149,7 @@ router.post('/', jsonParser, (req, res) => {
 
 // GETS all users
 
-router.get('/', (req, res) => {
+router.get('/', jwtAuth, (req, res) => {
   return User.find()
     .then(users => res.json(users.map(user => user.serialize())))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
