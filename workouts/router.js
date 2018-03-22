@@ -4,7 +4,8 @@ const express = require('express');
 const passport = require('passport');
 
 const {Workout} = require('./models');
-const {Exercise} = require('../exercises/models');
+
+const ExerciseModel = require('../exercises/models');
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ router.get('/', jwtAuth, (req, res) => {
 router.get('/:id', jwtAuth, (req, res) => {
   Workout
     .find()
-    .then(workouts => workouts.filter(workout => workout.user === req.params.id))
+    .then(workouts => workouts.filter(workout => workout.id === req.params.id))
     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
     .catch(err => res.status(500).json({message: 'Internal server error'})
   );
@@ -46,7 +47,7 @@ router.post('/', jwtAuth, (req, res) => {
     .create({
       user_id: req.user.id,
       date: Date.now(),
-      name: req.body.name
+      name: req.body.name,
     })
     .then(workout => res.status(201).json(workout.serialize()))
     .catch(err => {
@@ -57,7 +58,7 @@ router.post('/', jwtAuth, (req, res) => {
 
 // PUTS or UPDATES workout with provided workout Object Id and name
 
-router.put('/:id', (req, res) => {
+router.put('/:id', jwtAuth, (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
     const message = (
       `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`
@@ -83,10 +84,36 @@ router.put('/:id', (req, res) => {
 
 // DELETES workout with provided workout Object Id
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', jwtAuth, (req, res) => {
   Workout
     .findByIdAndRemove(req.params.id)
     .then(workout => res.status(204).end())
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
+});
+
+// POSTS or CREATES exercise within a select workout
+
+router.post('/:id/exercises', jwtAuth, (req, res) => {
+  if (!('name' in req.body)) {
+    const message = `Missing name in request body`
+    console.error(message);
+    return res.status(400).send(message);
+  }
+
+  ExerciseModel
+    .create({
+      name: req.body.name
+    })
+    .then(exercise => {
+      return Workout.update(
+        {_id: req.params.id},
+        {$push: {exercises: exercise}}
+      )
+    })
+    .then(result => res.status(201).json(result))
     .catch(err => {
       console.error(err);
       res.status(500).json({message: 'Internal server error'});

@@ -4,20 +4,18 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
+const SetModel = require('../sets/models');
+
 const ExerciseSchema = mongoose.Schema({
-    workout_id: {type: String, required: true},
-    name: {type: String, required: true},
-    sets: {type: String}
+  name: {type: String, required: true},
+  sets: [SetModel.schema]
 });
 
 ExerciseSchema.methods.serialize = function() {
   return {
-    workout_id: this.workout_id || '',
     name: this.name || '',
-    sets: this.sets ||''
+    sets: this.sets || []
   };
 };
 
-const Exercise = mongoose.model('Exercise', ExerciseSchema);
-
-module.exports = {Exercise};
+module.exports = mongoose.model('Exercise', ExerciseSchema);
