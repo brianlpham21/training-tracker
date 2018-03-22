@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 
 const {User} = require('./models');
-const {Workout} = require('../workouts/models');
+const Workout = require('../workouts/models');
 
 const router = express.Router();
 

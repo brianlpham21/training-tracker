@@ -3,9 +3,9 @@
 const express = require('express');
 const passport = require('passport');
 
-const {Workout} = require('./models');
-
+const WorkoutModel = require('./models');
 const ExerciseModel = require('../exercises/models');
+const SetModel = require('../sets/models');
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 // GETS all workouts
 
 router.get('/', jwtAuth, (req, res) => {
-  Workout
+  WorkoutModel
     .find()
     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
     .catch(err => res.status(500).json({message: 'Internal server error'})
@@ -26,7 +26,7 @@ router.get('/', jwtAuth, (req, res) => {
 // GETS select workout with provided Object Id
 
 router.get('/:id', jwtAuth, (req, res) => {
-  Workout
+  WorkoutModel
     .find()
     .then(workouts => workouts.filter(workout => workout.id === req.params.id))
     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
@@ -43,7 +43,7 @@ router.post('/', jwtAuth, (req, res) => {
     return res.status(400).send(message);
   }
 
-  Workout
+  WorkoutModel
     .create({
       user_id: req.user.id,
       date: Date.now(),
@@ -73,7 +73,7 @@ router.put('/:id', jwtAuth, (req, res) => {
     return res.status(400).send(message);
   }
 
-  Workout
+  WorkoutModel
     .findByIdAndUpdate(req.params.id, {$set:{
       'name': req.body.name,
       }
@@ -85,7 +85,7 @@ router.put('/:id', jwtAuth, (req, res) => {
 // DELETES workout with provided workout Object Id
 
 router.delete('/:id', jwtAuth, (req, res) => {
-  Workout
+  WorkoutModel
     .findByIdAndRemove(req.params.id)
     .then(workout => res.status(204).end())
     .catch(err => {
@@ -94,7 +94,33 @@ router.delete('/:id', jwtAuth, (req, res) => {
     });
 });
 
-// POSTS or CREATES exercise within a select workout
+// POSTS or CREATES an exercise within a select workout (Creates Exercise Collection)
+
+// router.post('/:id/exercises', jwtAuth, (req, res) => {
+//   if (!('name' in req.body)) {
+//     const message = `Missing name in request body`
+//     console.error(message);
+//     return res.status(400).send(message);
+//   }
+//
+//   ExerciseModel
+//     .create({
+//       name: req.body.name
+//     })
+//     .then(exercise => {
+//       return WorkoutModel.update(
+//         {_id: req.params.id},
+//         {$push: {exercises: exercise}}
+//       )
+//     })
+//     .then(result => res.status(201).json(result))
+//     .catch(err => {
+//       console.error(err);
+//       res.status(500).json({message: 'Internal server error'});
+//     });
+// });
+
+// POSTS or CREATES an exercise within a select workout
 
 router.post('/:id/exercises', jwtAuth, (req, res) => {
   if (!('name' in req.body)) {
@@ -103,16 +129,77 @@ router.post('/:id/exercises', jwtAuth, (req, res) => {
     return res.status(400).send(message);
   }
 
-  ExerciseModel
-    .create({
-      name: req.body.name
-    })
-    .then(exercise => {
-      return Workout.update(
-        {_id: req.params.id},
-        {$push: {exercises: exercise}}
-      )
-    })
+  WorkoutModel.update(
+    {_id: req.params.id},
+    {$push: {exercises: {name: req.body.name}}}
+  )
+  .then(result => res.status(201).json(result))
+  .catch(err => {
+    console.error(err);
+    res.status(500).json({message: 'Internal server error'});
+  });
+});
+
+// GETS all exercises from select workout
+
+router.get('/:id/exercises', jwtAuth, (req, res) => {
+  WorkoutModel
+    .find()
+    .then(workouts => workouts.filter(workout => workout.id === req.params.id))
+    .then(workout => res.json(workout[0].exercises))
+    .catch(err => res.status(500).json({message: 'Internal server error'})
+  );
+});
+
+// POSTS or CREATES a set within a select exercise and workout (Creates Set Collection)
+
+// router.post('/:workout_id/exercises/:exercise_id/sets', jwtAuth, (req, res) => {
+//   const requiredFields = ['weight', 'repetitions'];
+//   for (let i = 0; i < requiredFields.length; i++) {
+//     const field = requiredFields[i];
+//     if (!(field in req.body)) {
+//       const message = `Missing \`${field}\` in request body`
+//       console.error(message);
+//       return res.status(400).send(message);
+//     }
+//   }
+//
+//   SetModel
+//     .create({
+//       weight: req.body.weight,
+//       repetitions: req.body.repetitions
+//     })
+//     .then(set => {
+//       return WorkoutModel.update(
+//         {_id: req.params.workout_id, "exercises._id": req.params.exercise_id },
+//         {$push: {"exercises.$.sets": set}}
+//       )
+//     })
+//     .then(result => res.status(201).json(result))
+//     .catch(err => {
+//       console.error(err);
+//       res.status(500).json({message: 'Internal server error'});
+//     });
+// });
+
+// POSTS or CREATES a set within a select exercise and workout
+
+router.post('/:workout_id/exercises/:exercise_id/sets', jwtAuth, (req, res) => {
+  const requiredFields = ['weight', 'repetitions'];
+  for (let i = 0; i < requiredFields.length; i++) {
+    const field = requiredFields[i];
+    if (!(field in req.body)) {
+      const message = `Missing \`${field}\` in request body`
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  }
+
+  WorkoutModel
+    .update(
+      {_id: req.params.workout_id, "exercises._id": req.params.exercise_id },
+      {$push: {"exercises.$.sets": {weight: req.body.weight, repetitions: req.body.repetitions}}}
+    )
     .then(result => res.status(201).json(result))
     .catch(err => {
       console.error(err);

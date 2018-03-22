@@ -24,6 +24,4 @@ WorkoutSchema.methods.serialize = function() {
   };
 };
 
-const Workout = mongoose.model('Workout', WorkoutSchema);
-
-module.exports = {Workout};
+module.exports = mongoose.model('Workout', WorkoutSchema);

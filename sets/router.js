@@ -3,7 +3,7 @@
 const express = require('express');
 const passport = require('passport');
 
-const {Set} = require('./models');
+const SetModel = require('./models');
 
 const router = express.Router();
 
@@ -13,18 +13,18 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 
 // GETS all sets
 
-router.get('/', jwtAuth, (req, res) => {
-  Set
-    .find()
-    .then(sets => res.json(sets.map(set => set.serialize())))
-    .catch(err => res.status(500).json({message: 'Internal server error'})
-  );
-});
+// router.get('/', jwtAuth, (req, res) => {
+//   SetModel
+//     .find()
+//     .then(sets => res.json(sets.map(set => set.serialize())))
+//     .catch(err => res.status(500).json({message: 'Internal server error'})
+//   );
+// });
 
 // POSTS or CREATES a set for an exercise with provided set, weight, and repetition
 
 router.post('/', jwtAuth, (req, res) => {
-  const requiredFields = ['exercise_id', 'set', 'weight', 'repetitions'];
+  const requiredFields = ['weight', 'repetitions'];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -34,10 +34,8 @@ router.post('/', jwtAuth, (req, res) => {
     }
   }
 
-  Set
+  SetModel
     .create({
-      exercise_id: req.body.exercise_id,
-      set: req.body.set,
       weight: req.body.weight,
       repetitions: req.body.repetitions
     })
@@ -60,16 +58,15 @@ router.put('/:id', (req, res) => {
   };
 
   const toUpdate = {};
-  const updateableFields = ['set', 'weight', 'repetitions'];
+  const updateableFields = ['weight', 'repetitions'];
   updateableFields.forEach(field => {
     if (field in req.body) {
       toUpdate[field] = req.body[field];
     };
   });
 
-  Set
+  SetModel
     .findByIdAndUpdate(req.params.id, {$set:{
-      'set': toUpdate.set,
       'weight': toUpdate.weight,
       'repetitions': toUpdate.repetitions,
       }
@@ -81,7 +78,7 @@ router.put('/:id', (req, res) => {
 // DELETES a set with a provided set Object Id
 
 router.delete('/:id', (req, res) => {
-  Set
+  SetModel
     .findByIdAndRemove(req.params.id)
     .then(set => res.status(204).end())
     .catch(err => {
