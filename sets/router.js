@@ -77,14 +77,14 @@ router.put('/:id', (req, res) => {
 
 // DELETES a set with a provided set Object Id
 
-router.delete('/:id', (req, res) => {
-  SetModel
-    .findByIdAndRemove(req.params.id)
-    .then(set => res.status(204).end())
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({message: 'Internal server error'});
-    });
-});
+// router.delete('/:id', (req, res) => {
+//   SetModel
+//     .findByIdAndRemove(req.params.id)
+//     .then(set => res.status(204).end())
+//     .catch(err => {
+//       console.error(err);
+//       res.status(500).json({message: 'Internal server error'});
+//     });
+// });
 
 module.exports = {router};
