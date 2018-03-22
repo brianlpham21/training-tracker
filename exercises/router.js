@@ -15,13 +15,13 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 
 // GETS all exercises
 
-router.get('/', jwtAuth, (req, res) => {
-  ExerciseModel
-    .find()
-    .then(exercises => res.json(exercises.map(exercise => exercise.serialize())))
-    .catch(err => res.status(500).json({message: 'Internal server error'})
-  );
-});
+// router.get('/', jwtAuth, (req, res) => {
+//   ExerciseModel
+//     .find()
+//     .then(exercises => res.json(exercises.map(exercise => exercise.serialize())))
+//     .catch(err => res.status(500).json({message: 'Internal server error'})
+//   );
+// });
 
 // POSTS or CREATES an exercise with provided name
 

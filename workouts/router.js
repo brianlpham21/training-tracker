@@ -164,6 +164,21 @@ router.get('/:id/exercises/:exercise_id', jwtAuth, (req, res) => {
   );
 });
 
+// GETS all sets from select exercise
+
+router.get('/:id/exercises/:exercise_id/sets/:set_id', jwtAuth, (req, res) => {
+  WorkoutModel
+    .find()
+    .then(workouts => workouts.filter(workout => workout.id === req.params.id))
+    .then(workout => workout[0].exercises)
+    .then(exercises => exercises.filter(exercise => exercise.id === req.params.exercise_id))
+    .then(exercise => exercise[0].sets)
+    .then(sets => sets.filter(set => set.id === req.params.set_id))
+    .then(set => res.json(set))
+    .catch(err => res.status(500).json({message: 'Internal server error'})
+  );
+});
+
 // POSTS or CREATES a set within a select exercise and workout (Creates Set Collection)
 
 // router.post('/:workout_id/exercises/:exercise_id/sets', jwtAuth, (req, res) => {
