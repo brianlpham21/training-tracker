@@ -4,11 +4,10 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-// import ExerciseModel from '../exercises/models';
-
 const ExerciseModel = require('../exercises/models');
 
 const WorkoutSchema = mongoose.Schema({
+    // user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     user_id: {type: String, required: true},
     date: {type: Date, required: true},
     name: {type: String, required: true},

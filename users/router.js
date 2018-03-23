@@ -15,6 +15,14 @@ const {router: authRouter, localStrategy, jwtStrategy} = require('../auth');
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
+// GETS all users
+
+router.get('/', jwtAuth, (req, res) => {
+  return User.find()
+    .then(users => res.json(users.map(user => user.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
 // POSTS or CREATES a new user (registration)
 
 router.post('/', jsonParser, (req, res) => {
@@ -142,18 +150,7 @@ router.post('/', jsonParser, (req, res) => {
     });
 });
 
-// Never expose all your users like below in a prod application
-// we're just doing this so we have a quick way to see
-// if we're creating users. keep in mind, you can also
-// verify this in the Mongo shell.
-
-// GETS all users
-
-router.get('/', jwtAuth, (req, res) => {
-  return User.find()
-    .then(users => res.json(users.map(user => user.serialize())))
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
-});
+// WORKOUT ENDPOINTS
 
 // GETS all workouts for a specific user provided User Id
 

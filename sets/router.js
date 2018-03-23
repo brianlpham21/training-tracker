@@ -11,41 +11,6 @@ const {router: authRouter, localStrategy, jwtStrategy} = require('../auth');
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-// GETS all sets
-
-// router.get('/', jwtAuth, (req, res) => {
-//   SetModel
-//     .find()
-//     .then(sets => res.json(sets.map(set => set.serialize())))
-//     .catch(err => res.status(500).json({message: 'Internal server error'})
-//   );
-// });
-
-// POSTS or CREATES a set for an exercise with provided set, weight, and repetition
-
-router.post('/', jwtAuth, (req, res) => {
-  const requiredFields = ['weight', 'repetitions'];
-  for (let i = 0; i < requiredFields.length; i++) {
-    const field = requiredFields[i];
-    if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`
-      console.error(message);
-      return res.status(400).send(message);
-    }
-  }
-
-  SetModel
-    .create({
-      weight: req.body.weight,
-      repetitions: req.body.repetitions
-    })
-    .then(set => res.status(201).json(set.serialize()))
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({message: 'Internal server error'});
-    });
-});
-
 // PUTS or UPDATES a set for an exercise with provided set Object Id, set, weight, and repetition
 
 router.put('/:id', (req, res) => {
@@ -75,6 +40,43 @@ router.put('/:id', (req, res) => {
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
+module.exports = {router};
+
+// GETS all sets
+
+// router.get('/', jwtAuth, (req, res) => {
+//   SetModel
+//     .find()
+//     .then(sets => res.json(sets.map(set => set.serialize())))
+//     .catch(err => res.status(500).json({message: 'Internal server error'})
+//   );
+// });
+
+// POSTS or CREATES a set for an exercise with provided set, weight, and repetition
+
+// router.post('/', jwtAuth, (req, res) => {
+//   const requiredFields = ['weight', 'repetitions'];
+//   for (let i = 0; i < requiredFields.length; i++) {
+//     const field = requiredFields[i];
+//     if (!(field in req.body)) {
+//       const message = `Missing \`${field}\` in request body`
+//       console.error(message);
+//       return res.status(400).send(message);
+//     }
+//   }
+//
+//   SetModel
+//     .create({
+//       weight: req.body.weight,
+//       repetitions: req.body.repetitions
+//     })
+//     .then(set => res.status(201).json(set.serialize()))
+//     .catch(err => {
+//       console.error(err);
+//       res.status(500).json({message: 'Internal server error'});
+//     });
+// });
+
 // DELETES a set with a provided set Object Id
 
 // router.delete('/:id', (req, res) => {
@@ -86,5 +88,3 @@ router.put('/:id', (req, res) => {
 //       res.status(500).json({message: 'Internal server error'});
 //     });
 // });
-
-module.exports = {router};
