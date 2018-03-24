@@ -112,6 +112,19 @@ router.post('/:id/exercises', jwtAuth, (req, res) => {
 
 // GETS all sets from select exercise
 
+router.get('/:id/exercises/:exercise_id/sets', jwtAuth, (req, res) => {
+  WorkoutModel
+    .find()
+    .then(workouts => workouts.filter(workout => workout.id === req.params.id))
+    .then(workout => workout[0].exercises)
+    .then(exercises => exercises.filter(exercise => exercise.id === req.params.exercise_id))
+    .then(exercise => res.json(exercise[0].sets))
+    .catch(err => res.status(500).json({message: 'Internal server error'})
+  );
+});
+
+// GETS select set from select exercise
+
 router.get('/:id/exercises/:exercise_id/sets/:set_id', jwtAuth, (req, res) => {
   WorkoutModel
     .find()
@@ -154,35 +167,35 @@ module.exports = {router};
 
 // GETS all workouts
 
-// router.get('/', jwtAuth, (req, res) => {
-//   WorkoutModel
-//     .find()
-//     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
-//     .catch(err => res.status(500).json({message: 'Internal server error'})
-//   );
-// });
+router.get('/', jwtAuth, (req, res) => {
+  WorkoutModel
+    .find()
+    .then(workouts => res.json(workouts.map(workout => workout.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'})
+  );
+});
 
 // POSTS or CREATES a new workout with provided name
 
-// router.post('/', jwtAuth, (req, res) => {
-//   if (!('name' in req.body)) {
-//     const message = `Missing name in request body`
-//     console.error(message);
-//     return res.status(400).send(message);
-//   }
-//
-//   WorkoutModel
-//     .create({
-//       user_id: req.user.id,
-//       date: Date.now(),
-//       name: req.body.name,
-//     })
-//     .then(workout => res.status(201).json(workout.serialize()))
-//     .catch(err => {
-//       console.error(err);
-//       res.status(500).json({message: 'Internal server error'});
-//     });
-// });
+router.post('/', jwtAuth, (req, res) => {
+  if (!('name' in req.body)) {
+    const message = `Missing name in request body`
+    console.error(message);
+    return res.status(400).send(message);
+  }
+
+  WorkoutModel
+    .create({
+      user: req.user.id,
+      date: Date.now(),
+      name: req.body.name,
+    })
+    .then(workout => res.status(201).json(workout.serialize()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
+});
 
 // POSTS or CREATES an exercise within a select workout (Creates Exercise Collection)
 

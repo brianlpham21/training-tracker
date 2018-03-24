@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
+const User = require('../users/models');
 const ExerciseModel = require('../exercises/models');
 
 const WorkoutSchema = mongoose.Schema({
-    // user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    user_id: {type: String, required: true},
+    user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     date: {type: Date, required: true},
     name: {type: String, required: true},
     exercises: [ExerciseModel.schema]
@@ -16,7 +16,7 @@ const WorkoutSchema = mongoose.Schema({
 
 WorkoutSchema.methods.serialize = function() {
   return {
-    user_id: this.user_id || '',
+    user: this.user || '',
     date: this.date || '',
     name: this.name || '',
     exercises: this.exercises || []

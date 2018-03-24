@@ -157,7 +157,7 @@ router.post('/', jsonParser, (req, res) => {
 router.get('/:user_id/workouts', jwtAuth, (req, res) => {
   Workout
     .find()
-    .then(workouts => workouts.filter(workout => workout.user_id === req.params.user_id))
+    .then(workouts => workouts.filter(workout => workout.user.toString() === req.params.user_id))
     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
     .catch(err => res.status(500).json({message: 'Internal server error'})
   );
@@ -168,7 +168,7 @@ router.get('/:user_id/workouts', jwtAuth, (req, res) => {
 router.get('/:user_id/workouts/:workout_id', jwtAuth, (req, res) => {
   Workout
     .find()
-    .then(workouts => workouts.filter(workout => workout.user_id === req.params.user_id))
+    .then(workouts => workouts.filter(workout => workout.user.toString() === req.params.user_id))
     .then(workouts => workouts.filter(workout => workout.id === req.params.workout_id))
     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
     .catch(err => res.status(500).json({message: 'Internal server error'})
