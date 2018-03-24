@@ -197,6 +197,88 @@ router.post('/', jwtAuth, (req, res) => {
     });
 });
 
+router.patch('/:id/exercises/:exercise_id', (req, res) => {
+  WorkoutModel.updateOne(
+    {_id: req.params.id, 'exercises._id': req.params.exercise_id},
+    {$set: {'exercises.$.name':req.body.name}}
+  )
+  .then(result => res.status(201).json(result))
+  .catch(err => {
+    console.error(err);
+    res.status(500).json({message: 'Internal server error'});
+  });
+});
+
+router.patch('/:id/exercises/:exercise_id/sets/:sets_id', (req, res) => {
+  if (req.body.weight && req.body.repetitions) {
+    WorkoutModel.update(
+      {_id: req.params.id, 'exercises._id': req.params.exercise_id, 'exercises.sets._id': req.params.sets_id},
+      {$set: {'exercises.$.sets.0.weight':req.body.weight}}
+    )
+    .update(
+      {_id: req.params.id, 'exercises._id': req.params.exercise_id, 'exercises.sets._id': req.params.sets_id},
+      {$set: {'exercises.$.sets.0.repetitions':req.body.repetitions}}
+    )
+    .then(result => res.status(201).json(result))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
+  }
+
+  else if (req.body.weight) {
+    WorkoutModel.updateOne(
+      {_id: req.params.id, 'exercises._id': req.params.exercise_id, 'exercises.sets._id': req.params.sets_id},
+      {$set: {'exercises.$.sets.0.weight':req.body.weight}}
+    )
+    .then(result => res.status(201).json(result))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
+  }
+
+  else {
+    WorkoutModel.updateOne(
+      {_id: req.params.id, 'exercises._id': req.params.exercise_id, 'exercises.sets._id': req.params.sets_id},
+      {$set: {'exercises.$.sets.0.repetitions':req.body.repetitions}}
+    )
+    .then(result => res.status(201).json(result))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
+  }
+});
+
+// DELETES an exercise with a provided exercise Object Id
+
+router.delete('/:id/exercises/:exercise_id', (req, res) => {
+  WorkoutModel
+    .update(
+      {_id: req.params.id},
+      {$pull: {'exercises': {'_id': req.params.exercise_id}}}
+    )
+    .then(result => res.status(201).json(result))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
+});
+
+router.delete('/:id/exercises/:exercise_id/sets/:set_id', (req, res) => {
+  WorkoutModel
+    .update(
+      {_id: req.params.id, "exercises._id": req.params.exercise_id, 'exercises.sets._id': req.params.set_id},
+      {$pull: {'sets': {'_id': req.params.set_id}}}
+    )
+    .then(result => res.status(201).json(result))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
+});
+
 // POSTS or CREATES an exercise within a select workout (Creates Exercise Collection)
 
 // router.post('/:id/exercises', jwtAuth, (req, res) => {

@@ -15,31 +15,31 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 
 // PATCH or UPDATES an exercise with a provided exercise Object Id and name
 
-router.patch('/:id', (req, res) => {
-  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-    const message = (
-      `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`
-    );
-    console.error(message);
-    return res.status(400).json({message: message});
-  };
-
-  if (!('name' in req.body)) {
-    const message = `Missing name in request body`
-    console.error(message);
-    return res.status(400).send(message);
-  }
-
-  WorkoutModel
-    .update(
-      {'exercises._id': req.params.id},
-      {$set: {exercises: [{name: req.body.name}]}}
-    )
-    .then(result => res.status(201).json(result))
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({message: 'Internal server error'});
-    });
+// router.patch('/:id', (req, res) => {
+//   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+//     const message = (
+//       `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`
+//     );
+//     console.error(message);
+//     return res.status(400).json({message: message});
+//   };
+//
+//   if (!('name' in req.body)) {
+//     const message = `Missing name in request body`
+//     console.error(message);
+//     return res.status(400).send(message);
+//   }
+//
+//   WorkoutModel
+//     .update(
+//       {'exercises._id': req.params.id},
+//       {$set: {exercises: [{name: req.body.name}]}}
+//     )
+//     .then(result => res.status(201).json(result))
+//     .catch(err => {
+//       console.error(err);
+//       res.status(500).json({message: 'Internal server error'});
+//     });
 
   // ExerciseModel
   //   .findByIdAndUpdate(req.params.id, {$set:{
@@ -54,7 +54,7 @@ router.patch('/:id', (req, res) => {
   //   })
   //   .then(result => res.status(201).json(result))
   //   .catch(err => res.status(500).json({message: 'Internal server error'}));
-});
+// });
 
 module.exports = {router};
 
@@ -88,18 +88,3 @@ module.exports = {router};
 //       res.status(500).json({message: 'Internal server error'});
 //     });
 // });
-
-// DELETES an exercise with a provided exercise Object Id
-
-router.delete('/:id', (req, res) => {
-  WorkoutModel
-    .update(
-      {},
-      {$pull: {exercises: {_id: req.params.id}}}
-    )
-    .then(result => res.status(201).json(result))
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({message: 'Internal server error'});
-    });
-});
