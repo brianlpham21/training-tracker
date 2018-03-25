@@ -269,7 +269,7 @@ router.delete('/:id/exercises/:exercise_id', (req, res) => {
 router.delete('/:id/exercises/:exercise_id/sets/:set_id', (req, res) => {
   WorkoutModel
     .update(
-      {_id: req.params.id, "exercises._id": req.params.exercise_id, 'exercises.sets._id': req.params.set_id},
+      {_id: req.params.id, "exercises._id": req.params.exercise_id},
       {$pull: {'sets': {'_id': req.params.set_id}}}
     )
     .then(result => res.status(201).json(result))
