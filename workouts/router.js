@@ -15,7 +15,7 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 
 router.get('/limit', jwtAuth, (req, res) => {
   WorkoutModel
-    .find()
+    .find({user: req.user.id})
     .sort({'date': -1})
     .limit(3)
     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
@@ -179,7 +179,7 @@ module.exports = {router};
 
 router.get('/', jwtAuth, (req, res) => {
   WorkoutModel
-    .find()
+    .find({user: req.user.id})
     .then(workouts => res.json(workouts.map(workout => workout.serialize())))
     .catch(err => res.status(500).json({message: 'Internal server error'})
   );
