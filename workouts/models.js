@@ -16,6 +16,7 @@ const WorkoutSchema = mongoose.Schema({
 
 WorkoutSchema.methods.serialize = function() {
   return {
+    workout_id: this._id || '',
     user: this.user || '',
     date: this.date || '',
     name: this.name || '',

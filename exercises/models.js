@@ -13,6 +13,7 @@ const ExerciseSchema = mongoose.Schema({
 
 ExerciseSchema.methods.serialize = function() {
   return {
+    exercise_id: this._id || '',
     name: this.name || '',
     sets: this.sets || []
   };
