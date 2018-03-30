@@ -1,4 +1,11 @@
 language: node_js
 node_js: node
 services:
-    - mongodb
+- mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: MoQfvv0glgpNBE0TcSBTPNzyKll9wrMtONk75W7eaeGhR+PI0FC9vn3r6wdclhec/Vq+ph+SuGmbc15xIs8H8zgPqM9n7j/YJY1Vil34rhaneikWR+6LUWrwWq+PF0eM6Nx0/jsQGU7ao4Km7fC6sKqJfMLQ9EMqDbIi/RTohY9pSKxUWfLRXcUsllNDqzHTQ8EW1tHzhoLmnF+vjwzzaxdzJEBbmAWU+WOx3QM8JICzN8OJe1dXOEUg+4dmDPCCfoIY/DSmB8y474UKN27AexS/U7xRyBxS0FetHGQT/y0OXGn6Km+FHiYQ3VZvy5LzdVZnYOfuq8s0G7J2cmnPtQss1ts82yASP6zGhPfGYH8L1Xyrvf5Msfk8xXtKzL4+tAbrktNVroXV8CWYAz0Ii+8Dh0bno3zvpY2pymGRsoCf+SZAL6b1uwzXp3JIe8tHV3WfXsw8eibPrZxcomTOTI2RFTbHoPN+YKa+TuUKK8+fLanEwlnVzL+5InkUrXsMVLFsota/QLoOkGdR1nt8QEn4/LtdkHCqmh5iBUQEOWitdjOWOS5pFblZQmCxYUxDMDLja0MLZxe/Aixvei/wWzt5UoNGt3fFe1KQ+dumz8qjoGu3ukgm1AqgMFblHtVIHe34Kd6O7NLhmgG/z/3QlVflOOnsZmLf6Ip4fEWvZ6M=
+  app: immense-thicket-91137
+  on:
+    repo: brianlpham21/training-tracker
