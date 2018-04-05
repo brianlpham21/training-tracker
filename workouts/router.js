@@ -220,14 +220,18 @@ router.patch('/:id/exercises/:exercise_id', (req, res) => {
 });
 
 router.patch('/:id/exercises/:exercise_id/sets/:sets_id', (req, res) => {
+  const number = req.body.set_number;
+  const weight = `exercises.$.sets.${number}.weight`;
+  const repetitions = `exercises.$.sets.${number}.repetitions`;
+
   if (req.body.weight && req.body.repetitions) {
     WorkoutModel.update(
       {_id: req.params.id, 'exercises._id': req.params.exercise_id, 'exercises.sets._id': req.params.sets_id},
-      {$set: {'exercises.$.sets.0.weight':req.body.weight}}
+      {$set: {[weight]:req.body.weight}}
     )
     .update(
       {_id: req.params.id, 'exercises._id': req.params.exercise_id, 'exercises.sets._id': req.params.sets_id},
-      {$set: {'exercises.$.sets.0.repetitions':req.body.repetitions}}
+      {$set: {[repetitions]:req.body.repetitions}}
     )
     .then(result => res.status(201).json(result))
     .catch(err => {
@@ -239,7 +243,7 @@ router.patch('/:id/exercises/:exercise_id/sets/:sets_id', (req, res) => {
   else if (req.body.weight) {
     WorkoutModel.updateOne(
       {_id: req.params.id, 'exercises._id': req.params.exercise_id, 'exercises.sets._id': req.params.sets_id},
-      {$set: {'exercises.$.sets.0.weight':req.body.weight}}
+      {$set: {[weight]:req.body.weight}}
     )
     .then(result => res.status(201).json(result))
     .catch(err => {
@@ -251,7 +255,7 @@ router.patch('/:id/exercises/:exercise_id/sets/:sets_id', (req, res) => {
   else {
     WorkoutModel.updateOne(
       {_id: req.params.id, 'exercises._id': req.params.exercise_id, 'exercises.sets._id': req.params.sets_id},
-      {$set: {'exercises.$.sets.0.repetitions':req.body.repetitions}}
+      {$set: {[repetitions]:req.body.repetitions}}
     )
     .then(result => res.status(201).json(result))
     .catch(err => {
