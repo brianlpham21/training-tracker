@@ -153,7 +153,5 @@ describe('Workouts endpoint', function() {
           expect(res.body).to.be.an('array');
         });
     });
-
-
   });
 });
